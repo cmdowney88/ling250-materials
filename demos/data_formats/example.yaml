@@ -1,0 +1,28 @@
+Carlos:
+  age: 32
+  friends:
+  - Cecil
+  gpa: 3.99
+  major: Physics
+  year: 3
+Cecil:
+  age: 36
+  friends: 
+  - Carlos
+  - Dana
+  gpa: 3.8
+  major: Journalism
+  year: 3
+Dana:
+  age: 23
+  friends:
+  - Cecil
+  gpa: 3.95
+  major: Political Science
+  year: 2
+Hiram:
+  age: 42
+  friends: null
+  gpa: 2.9
+  major: Literature
+  year: 4

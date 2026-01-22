@@ -1,0 +1,43 @@
+{
+    "nightvale_characters": [
+        {
+            "name": "Cecil",
+            "age": 35,
+            "year": 3,
+            "major": "Journalism",
+            "gpa": 3.8,
+            "friends": [
+                "Carlos",
+                "Dana"
+            ]
+        },
+        {
+            "name": "Dana",
+            "age": 23,
+            "year": 2,
+            "major": "Political Science",
+            "gpa": 3.95,
+            "friends": [
+                "Cecil"
+            ]
+        },
+        {
+            "name": "Hiram",
+            "age": 42,
+            "year": 4,
+            "major": "Literature",
+            "gpa": 2.9,
+            "friends": null
+        },
+        {
+            "name": "Carlos",
+            "age": 32,
+            "year": 3,
+            "major": "Physics",
+            "gpa": 3.99,
+            "friends": [
+                "Cecil"
+            ]
+        }
+    ]
+}

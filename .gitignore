@@ -1,0 +1,32 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+*.egg
+.eggs/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Copyrighted data (must be obtained separately)
+data/Night_Vale.txt
+
+# Student work (if they clone and work in this directory)
+*.bak
+scratch/
+my_*/
