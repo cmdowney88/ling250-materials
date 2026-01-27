@@ -1,0 +1,48 @@
+# LING 250/450: Data Science for Linguistics
+# Course environment - Spring 2026
+#
+# To create this environment:
+#   conda env create -f environment.yaml
+#
+# To activate:
+#   conda activate ling250
+#
+# To update (if this file changes):
+#   conda env update -f environment.yaml
+
+name: ling250
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Core
+  - python=3.10
+
+  # Text processing
+  - nltk
+  - sentencepiece
+
+  # Data & computation
+  - numpy>=1.20,<2.0  # plotnine compatibility
+  - scipy
+  - scikit-learn
+
+  # Visualization
+  - matplotlib
+  - plotnine
+
+  # Topic modeling / word vectors (used later in semester)
+  - gensim
+
+  # Notebooks & interactive
+  - jupyter
+  - ipykernel
+  - ipython
+
+  # Utilities
+  - tqdm
+  - pyyaml
+  - yapf
+  - pip
