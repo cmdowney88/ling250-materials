@@ -22,6 +22,7 @@ ENV/
 .vscode/
 *.swp
 *.swo
+.gitattributes
 
 # Copyrighted data (must be obtained separately)
 data/Night_Vale.txt
