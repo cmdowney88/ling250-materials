@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<students>
+    <student id="1" status="active">
+        <name>Cecil</name>
+        <age>35</age>
+        <year>3</year>
+        <major>Journalism</major>
+        <gpa>3.8</gpa>
+        <friends>
+            <friend>Carlos</friend>
+            <friend>Dana</friend>
+        </friends>
+    </student>
+    <student id="2" status="active">
+        <name>Dana</name>
+        <age>23</age>
+        <year>2</year>
+        <major>Political Science</major>
+        <gpa>3.95</gpa>
+        <friends>
+            <friend>Cecil</friend>
+        </friends>
+    </student>
+    <student id="3" status="active">
+        <name>Carlos</name>
+        <age>32</age>
+        <year>3</year>
+        <major>Physics</major>
+        <gpa>3.99</gpa>
+        <friends>
+            <friend>Cecil</friend>
+        </friends>
+    </student>
+    <student id="4" status="inactive">
+        <name>Hiram</name>
+        <age>42</age>
+        <year>4</year>
+        <major>Literature</major>
+        <gpa>2.9</gpa>
+        <friends/>
+    </student>
+</students>
