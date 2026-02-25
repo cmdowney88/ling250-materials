@@ -23,6 +23,7 @@ dependencies:
   # Text processing
   - nltk
   - sentencepiece
+  - conllu
 
   # Data & computation
   - pandas
