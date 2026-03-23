@@ -1,0 +1,713 @@
+---
+title: "Lecture 17: Intro to R and Descriptive Statistics"
+subtitle: "Ling 250/450: Data Science for Linguistics"
+date: "Spring 2026"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+
+Welcome to the second half of the course! We're switching gears from Python and
+text data to **R and quantitative data analysis**. The focus for the rest of the
+semester:
+
+- **Statistics and probability** in R
+- **Manipulating and visualizing data** with the tidyverse and ggplot
+- **Hypothesis testing**, applied to your term projects
+
+This notebook covers two things at once: getting oriented to R as a language,
+and understanding the foundational concepts of descriptive statistics.
+
+---
+
+## 0. RStudio Tour
+
+### The Four Panes
+
+RStudio organizes your workspace into four panes. When you first open it (with
+no file open), you'll see three:
+
+**R Console** (left): the interactive R interpreter — like the Python REPL you
+already know. You can type R expressions here and see results immediately.
+
+**Environment** (top-right): shows every variable you've defined in the current
+session. As you create variables, they'll appear here with their values.
+
+**Files / Plots / Packages / Help** (bottom-right): a multi-tab panel for
+navigating your filesystem, viewing plots, managing installed packages, and
+reading documentation.
+
+### Opening This Notebook
+
+1. In RStudio, go to **File → Open File** and navigate to this `.Rmd` file
+2. The **Script/Notebook editor** opens as a fourth pane above the console
+3. You'll see the document rendered as a mix of text and code chunks
+
+### Running Code
+
+- To run a single chunk: click the **Run** button (▶) at the top-right of
+  the chunk, or press **Ctrl+Shift+Enter** (Windows/Linux) /
+  **Cmd+Shift+Enter** (Mac)
+- To run just the current line or a selection: **Ctrl+Enter** / **Cmd+Enter**
+- Output and plots appear inline below each chunk
+
+### Rendering (Knitting) This Document
+
+Click the **Knit** button at the top of the editor pane to render the full
+notebook to HTML. RStudio will run all chunks from scratch and open the output
+in a new window (or the Viewer pane).
+
+Before knitting, make sure you've installed `dplyr` (covered in §3) — the
+notebook uses it, and knitting will fail if it's missing.
+
+If knitting fails with an error about `rmarkdown` or `knitr` not being found,
+run these once in the console:
+
+```r
+install.packages("rmarkdown")
+install.packages("knitr")
+```
+
+These are usually pre-installed with RStudio, but may be missing on some systems.
+
+---
+
+## 1. What R Is Good For
+
+R was designed specifically for data analysis and statistics. Its strengths:
+
+- **Tabular data** (CSVs, data frames) — via the `tidyverse` library ecosystem
+- **Statistical analysis** — many statistical tests are built in or easily installed
+- **Data visualization** — R's `ggplot2` library is the gold standard for
+  scientific figures
+
+What R is **not** good for:
+
+- **Text processing** — string operations are less intuitive than Python
+- **General-purpose programming** — complex algorithms are cumbersome; Python is
+  far more versatile
+
+For this course: Python for text processing, R for statistics and visualization.
+
+---
+
+## 2. R Language Basics
+
+### Similarities to Python
+
+**Arithmetic operators** work the same way:
+
+```{r arithmetic}
+# Addition, subtraction
+3 + 5
+10 - 4
+
+# Multiplication, division, exponentiation
+6 * 7
+20 / 4
+2 ^ 8
+
+# Comparisons
+10 > 5
+3 == 3
+4 != 7
+```
+
+**Strings** are written in double quotes:
+
+```{r strings}
+my_string = "This is a string"
+my_string
+```
+
+Note: In R, strings and individual characters are the same type, both called
+"character" (unlike Python, which distinguishes `str` from `chr`). String
+manipulation functions exist but are less intuitive than Python's.
+
+**Comments** use `#`:
+
+```{r comments}
+# This is a comment — R ignores it
+x = 42  # inline comments work too
+```
+
+### Minor Syntax Differences
+
+**Variable assignment** — R has two equivalent options:
+
+```{r assignment}
+# Both of these do the same thing
+my_variable = 10
+my_variable <- 10
+
+my_variable
+```
+
+The arrow operator (`<-`) is the traditional R style; `=` was added later and
+is now widely accepted. We'll use `=` in this course.
+
+**Boolean operators** — same logic as Python, different symbols:
+
+```{r booleans}
+# "and": & (not "and")
+# "or": | (not "or")
+# "not": ! (not "not")
+# Boolean values: TRUE / FALSE (not True / False)
+
+TRUE & FALSE
+TRUE | FALSE
+!TRUE
+
+# Parentheses needed for order of operations
+(2 > 1) & (3 > 2)
+```
+
+**Other constructs** (functions, if/else, loops) work similarly to Python but
+with syntactic differences. We won't focus on these heavily — see *Learning
+Statistics with R* Ch. 3 if you need them.
+
+### Vectors: R's Version of Python Lists
+
+The most important data structure difference between R and Python is how
+sequences work. In Python, you use lists. In R, the equivalent is a **vector**.
+
+```{r vectors}
+# Create a vector with the c() function ("combine")
+my_vec = c(1, 2, 3, 4, 5)
+my_vec
+```
+
+Key differences from Python lists:
+
+**1. Indexing starts at 1 (not 0):**
+
+```{r indexing}
+my_vec[1]   # first element is 1, not 0
+my_vec[5]   # last element
+```
+
+**2. Elements can be reassigned:**
+
+```{r element_reassign}
+my_vec[1] = 0
+my_vec
+```
+
+**3. Arithmetic applies to all elements at once (vectorized):**
+
+```{r vectorized}
+my_vec = c(1, 2, 3, 4, 5)  # reset
+
+my_vec * 2         # multiply every element by 2
+my_vec + c(1, 2, 3, 4, 5)  # element-wise addition of two vectors
+```
+
+**4. `length()` gives the number of elements:**
+
+```{r length}
+length(my_vec)
+```
+
+<details>
+<summary>**Challenge:** What does `my_vec ^ 2` produce? Try it.</summary>
+
+```{r challenge_vectors}
+my_vec ^ 2
+```
+
+It squares each element. Vectorized operations apply element-wise.
+</details>
+
+### Data Frames
+
+A **data frame** stores tabular data — rows and columns, like a spreadsheet or
+CSV. This is R's equivalent of a pandas DataFrame (but we'll use R's built-in
+and tidyverse tools instead).
+
+```{r read_csv}
+# Read a CSV file into a data frame
+vowels = read.csv("../data/vowels.csv")
+
+# View the first few rows
+head(vowels)
+```
+
+You can also create a data frame from vectors:
+
+```{r create_df}
+evens = c(2, 4, 6, 8)
+odds = c(1, 3, 5, 7)
+data.frame(evens, odds)
+```
+
+**Accessing a column** with the `$` operator:
+
+```{r dollar_operator}
+# Get the VOWEL column as a vector
+head(vowels$VOWEL)
+
+# Get all column names
+names(vowels)
+```
+
+---
+
+## 3. Packages and dplyr
+
+### Installing Packages
+
+R packages extend the base language with additional functions. The main
+repository for R packages is CRAN (the Comprehensive R Archive Network).
+
+**Installing via RStudio's GUI** (recommended for new packages):
+
+1. Go to the **Packages** tab in the bottom-right pane
+2. Click **Install**
+3. Type the package name (e.g., `dplyr`) — autocomplete will suggest matches
+4. Make sure **Install dependencies** is checked, then click **Install**
+
+You only need to install a package once. RStudio will show its progress in the
+console.
+
+**Alternatively**, you can install from the console directly:
+
+```r
+# Run in the console, not in a notebook chunk — you only need to do this once
+install.packages("dplyr")
+```
+
+### Loading a Package
+
+Once installed, load a package with `library()` (similar to Python's `import`):
+
+```{r load_dplyr}
+library(dplyr)
+```
+
+Unlike Python, you do **not** need to prefix function names with the package
+name. After `library(dplyr)`, you call `filter()` directly — not `dplyr::filter()`.
+
+### Filtering Data Frames with `filter()`
+
+`filter()` returns a **subset** of a data frame where certain conditions hold:
+
+```{r filter_basic}
+# All rows where the vowel is "i"
+filter(vowels, VOWEL == "i")
+```
+
+`filter()` can take **any number of conditions**, all of which must be true:
+
+```{r filter_multi}
+# Female speakers producing the vowels "i" or "u",
+# whose height is at or below the mean height of all speakers
+filter(
+  vowels,
+  SEX == "female",
+  VOWEL == "i" | VOWEL == "u",
+  HEIGHT <= mean(HEIGHT)
+)
+```
+
+Note: `mean(HEIGHT)` here refers to the HEIGHT column of the data frame —
+dplyr makes columns available by name within filter conditions.
+
+<details>
+<summary>**Challenge:** Filter for male speakers who produced the vowel "æ"
+(written as "ae" in the data). How many rows are there?</summary>
+
+```{r challenge_filter}
+ae_males = filter(vowels, SEX == "male", VOWEL == "ae")
+nrow(ae_males)
+```
+</details>
+
+---
+
+## 4. Variable Types and Scales of Measurement
+
+### What Is a Variable?
+
+A **variable** is a measurable attribute of data — something you record for
+each observation. Variables come from:
+
+- **Instrumentation or observation** (e.g., vowel formants measured with a
+  microphone and audio software)
+- **Human responses** (e.g., a survey answer)
+
+Variables are usually stored in **columns** of a data frame or CSV. Critically,
+variables are **not all on the same scale** — you can't directly compare birth
+year, eye color, and vowel formants.
+
+### Four Scales of Measurement
+
+Our textbook (LSR) defines four scales. The scale tells you **how you should
+analyze** a variable.
+
+#### Nominal (Categorical)
+
+Nominal variables have **no meaningful ordering or relationship** between values.
+The only thing you can say is that values are different.
+
+- Examples: eye color, sex, citizenship, language spoken, transportation method
+- Neither French nor German is "greater than" the other, and they **can't be
+  averaged**
+- I will usually call these **categorical variables**
+
+#### Ordinal
+
+Ordinal variables have a **natural, meaningful ordering** between values, but
+**no other structure**.
+
+- Examples: position in a race, ranked choice voting, other rankings
+- Finishing 1st vs. 2nd tells you who was faster, but **not by how much**
+- Addition and subtraction are **not well-defined** (1st place isn't "3rd minus
+  2nd")
+- Ordinal values also **can't be meaningfully averaged**
+
+#### Interval
+
+Interval variables are **ordered** and **differences are meaningful**, but they
+have **no true zero value**.
+
+- Examples: Fahrenheit and Celsius, calendar year
+- The difference between 60° and 65° is the same as between 20° and 25°
+- But: 0°C is not "no heat," and 40° is not "twice as hot" as 20°
+- **Not meaningful to multiply or divide**
+
+#### Ratio
+
+Ratio variables have **ordering**, **meaningful differences**, and a **true
+zero**.
+
+- Examples: race finish time, weight, age, sports scores
+- A 30 y/o is 5 years older than a 25 y/o (30 − 25), or 1.2× older (30 / 25)
+- Ratio variables **can be meaningfully averaged**
+- These are what you might think of as "regular" numbers
+
+### Continuous vs. Discrete
+
+- **Continuous**: for any two values, it's possible to have a value in-between
+  (e.g., between 2.0 and 3.0 is 2.5, then 2.05, etc.)
+- **Discrete**: not continuous (e.g., the number that comes up after rolling a die)
+
+| | continuous | discrete |
+|---------|:---:|:---:|
+| nominal | | ✓ |
+| ordinal | | ✓ |
+| interval | ✓ | ✓ |
+| ratio | ✓ | ✓ |
+
+*From LSR p.17*
+
+Nominal and ordinal variables are always discrete. Interval and ratio variables
+can be either.
+
+### Exercise: Measurement Scales in the Vowels Dataset
+
+The `vowels` data frame has these columns: SPEAKER, WORD, VOWEL, F1, F2, SEX,
+HEIGHT.
+
+What is the **measurement scale** of each variable?
+
+<details>
+<summary>**Answers**</summary>
+
+| Column | Scale | Notes |
+|--------|-------|-------|
+| SPEAKER | nominal/categorical | just labels for different speakers |
+| WORD | nominal/categorical | no ordering between words |
+| VOWEL | nominal/categorical | for our purposes (vowel categories) |
+| F1 | ratio | frequency in Hz; has a true zero |
+| F2 | ratio | frequency in Hz; has a true zero |
+| SEX | nominal/categorical | no ordering |
+| HEIGHT | ratio | height in cm; has a true zero |
+
+</details>
+
+### Factors in R
+
+Sometimes a **categorical variable is coded as a number** in a CSV — for
+example, a "sex" column might use 0 for male, 1 for female. R will naively
+treat these as numeric, which can cause problems:
+
+```{r factor_problem}
+sex_numeric = c(0, 1, 0, 0, 1, 0, 0, 0)
+
+# R treats this as a number — inappropriate operations succeed silently
+sex_numeric < 2       # all TRUE (meaningless)
+sex_numeric / 8       # silently produces garbage
+```
+
+The R data type **factor** designates a categorical variable and prevents
+inappropriate manipulation:
+
+```{r factor_fix}
+sex_factor = as.factor(sex_numeric)
+sex_factor            # shows levels
+
+# Now arithmetic raises a warning and returns NA
+sex_factor + 1
+```
+
+You can give the **levels** meaningful names with `levels()`:
+
+```{r factor_levels}
+sex_named = as.factor(c(0, 1, 0, 0, 1, 0, 0, 0))
+levels(sex_named) = c("male", "female")
+sex_named
+```
+
+This also prevents accidental equivalence between two different factor
+variables that happen to use the same numbers — after naming, R will error if
+you try to compare factors with different level sets.
+
+---
+
+## 5. Descriptive Statistics
+
+**Descriptive statistics** aim to **concisely and meaningfully summarize** data.
+(As opposed to *inferential* statistics, which make inferences from data — more
+on that in the coming weeks.)
+
+Two broad categories:
+
+- **Central tendency**: where the "middle" of the data is (mean, median, mode)
+- **Variability**: how much the data deviates from the central tendency
+  (variance, standard deviation)
+
+### Central Tendency
+
+#### Mean
+
+The **mean** (what most people call the "average") is the sum of all data
+points divided by the total number of data points:
+
+$$\bar{X} = \frac{1}{N} \sum_{i=1}^{N} X_i$$
+
+```{r mean}
+mean(c(1, 2, 3, 4, 5))
+
+# Mean F1 in the vowels dataset
+mean(vowels$F1)
+```
+
+#### Median
+
+The **median** is the middle datapoint when values are arranged in order. It is
+equivalent to the **50th percentile**: half the data falls above it, half below.
+
+```{r median}
+# 3 is the median of both of these:
+median(c(1, 2, 3, 4, 5))
+median(c(1, 2, 3, 8, 10))   # notice mean would differ, but median is same
+
+# For an even number of points, median = average of the middle two
+median(c(1, 2, 3, 4))       # (2 + 3) / 2 = 2.5
+
+# Median height in the vowels dataset
+median(vowels$HEIGHT)
+```
+
+#### Mean vs. Median
+
+**Advantages of the mean:**
+
+- Takes every datapoint into account (median ignores all but the middle)
+- Mathematically important — used in many statistical formulas
+- Almost everyone understands it as the "average"
+
+**Advantages of the median:**
+
+- **Resistant to outlier datapoints** — this is why people report "median
+  salary" or "median home price": a handful of ultra-high earners skew the
+  mean upward
+- Appropriate for **ordinal data**, whereas the mean is not
+
+```{r mean_vs_median}
+# Simulated salaries: most people earn ~50k, one billionaire
+salaries = c(45000, 48000, 52000, 55000, 60000, 1000000000)
+mean(salaries)
+median(salaries)
+```
+
+### Variability
+
+#### Variance
+
+**Variance** is the mean squared deviation from the mean:
+
+$$Var(X) = \frac{1}{N} \sum_{i=1}^{N} (X_i - \bar{X})^2$$
+
+Squaring serves the same role as absolute value — it makes all deviations
+positive. Variance is mathematically important, but the units are squared
+(e.g., Hz²), which makes it hard to interpret directly.
+
+```{r variance}
+var(vowels$F1)
+```
+
+#### Standard Deviation
+
+**Standard deviation** is the square root of the variance:
+
+$$StDev(X) = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (X_i - \bar{X})^2}$$
+
+Often written as σ (sigma). Because it's in the **same units as the original
+variable**, it's easier to interpret than variance. You'll often see a
+distribution described as $\bar{X} \pm StDev(X)$.
+
+```{r sd}
+sd(vowels$F1)
+
+# Report mean ± SD
+cat("F1:", round(mean(vowels$F1), 1), "±", round(sd(vowels$F1), 1), "Hz\n")
+```
+
+#### Quantiles and Percentiles
+
+A **quantile** (or **percentile**) is a value below which a certain percentage
+of the data falls. The median is the 50th percentile.
+
+```{r quantiles}
+# 50th percentile of height (should equal the median)
+quantile(vowels$HEIGHT, probs = 0.5)
+
+# 25th, 50th, and 75th percentiles
+quantile(vowels$HEIGHT, probs = c(0.25, 0.5, 0.75))
+```
+
+#### Interquartile Range (IQR)
+
+The **IQR** is the difference between the 75th and 25th percentiles — it shows
+how wide the **middle 50%** of the data is. Useful compared to the total range:
+
+```{r iqr}
+IQR(vowels$HEIGHT)
+
+# Compare to total range
+total_range = max(vowels$HEIGHT) - min(vowels$HEIGHT)
+total_range
+```
+
+The IQR is 12.25 cm while the total range is 36 cm — the middle half of the
+data is relatively compact compared to the full spread.
+
+### Summary Statistics
+
+R's `summary()` function gives several statistics in one call, and works on
+either a vector or a full data frame:
+
+```{r summary_vector}
+summary(vowels$HEIGHT)
+```
+
+```{r summary_df}
+summary(vowels)
+```
+
+Note that for character columns (SPEAKER, WORD, VOWEL, SEX), `summary()` just
+reports the class and length — it can only compute numeric statistics for
+numeric columns.
+
+---
+
+## 6. Basic Plotting
+
+R has built-in functions for quick data visualization. These are great for
+**exploratory analysis** — getting a fast look at your data. For
+publication-quality figures, we'll use `ggplot2` (coming in a few weeks).
+
+### Scatterplots with `plot()`
+
+`plot()` with **one vector** plots the values on the y-axis (by index). With
+**two vectors**, it makes a **scatterplot**:
+
+```{r scatterplot}
+# Scatterplot of F1 vs. F2
+plot(vowels$F1, vowels$F2)
+```
+
+Notice the negative correlation — higher F1 tends to go with lower F2, which
+corresponds to the vowel space in phonetics.
+
+### Histograms with `hist()`
+
+`hist()` plots the **frequency** of values in certain ranges, giving you a
+sense of the data's distribution:
+
+```{r histogram}
+hist(vowels$HEIGHT)
+```
+
+The `breaks` argument controls approximately how many bins to use:
+
+```{r histogram_breaks}
+# Fewer bins — broader picture
+hist(vowels$HEIGHT, breaks = 4)
+
+# More bins — finer detail
+hist(vowels$HEIGHT, breaks = 16)
+```
+
+<details>
+<summary>**Challenge:** Plot a histogram of F1 values. What shape does the
+distribution have?</summary>
+
+```{r challenge_hist}
+hist(vowels$F1, breaks = 20, main = "F1 Distribution", xlab = "F1 (Hz)")
+```
+
+The distribution is right-skewed — most F1 values are in the lower range, with
+a long tail toward higher frequencies.
+</details>
+
+### Boxplots with `boxplot()`
+
+`boxplot()` shows the **inner quartiles** of the data. The box covers the
+middle 50% (from 25th to 75th percentile), the line inside is the median, and
+the whiskers extend to the data's range (excluding outliers):
+
+```{r boxplot}
+boxplot(vowels$HEIGHT)
+```
+
+Note that `boxplot()` doesn't add axis titles by default. You can add them:
+
+```{r boxplot_titled}
+boxplot(vowels$HEIGHT, ylab = "Height (cm)", main = "Speaker Heights")
+```
+
+---
+
+## Quick Reference
+
+| Task | R code |
+|------|--------|
+| Create a vector | `c(1, 2, 3)` |
+| Index a vector | `vec[1]` (1-based!) |
+| Read a CSV | `read.csv("file.csv")` |
+| Access a column | `df$COLUMN` |
+| Get column names | `names(df)` |
+| Load a package | `library(dplyr)` |
+| Filter rows | `filter(df, condition)` |
+| Convert to factor | `as.factor(vec)` |
+| Name factor levels | `levels(fac) = c("a", "b")` |
+| Mean | `mean(vec)` |
+| Median | `median(vec)` |
+| Variance | `var(vec)` |
+| Standard deviation | `sd(vec)` |
+| Percentiles | `quantile(vec, probs = 0.25)` |
+| IQR | `IQR(vec)` |
+| Summary stats | `summary(vec)` or `summary(df)` |
+| Scatterplot | `plot(x_vec, y_vec)` |
+| Histogram | `hist(vec, breaks = 10)` |
+| Boxplot | `boxplot(vec)` |
